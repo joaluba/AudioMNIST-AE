@@ -30,9 +30,9 @@ class AudioMnistPowSpec(Dataset):
         return len(self.Name)
 
     def __getitem__(self,index):
-        # load signal
         _,S,_=helpers.wav2powspec(filename=self.Name[index], n_fft=1024, hop_length=512, win_length = None, sample_rate = self.sr, pad_dur=1)
-        data_point=S
+        data_point=S.view(1,513,44)
+        assert data_point.shape==torch.Size([1, 513,44]), f"shape={data_point.shape} filename={self.Name[index]}"
         label=self.Label[index]
         return data_point, label
 

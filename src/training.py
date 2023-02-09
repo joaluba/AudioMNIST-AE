@@ -62,7 +62,15 @@ class AutoencoderLin(nn.Module):
     def forward(self,x):
         x_encoded=self.encoder(x)
         x_decoded=self.decoder(x_encoded)
-        return x_decoded 
+        return x_decoded
+
+
+class SpectralConvergenceLoss(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x_mag, y_mag):
+        return torch.norm(y_mag - x_mag, p="fro") / torch.norm(y_mag, p="fro") 
 
 #  ------------------- TRAINING --------------------
 
@@ -100,7 +108,7 @@ def training(model, dataloader, num_epochs, device, store_outputs):
         # Print stats at the end of the epoch
         num_batches = len(dataloader)
         avg_loss = running_loss / num_batches
-        print(f'Epoch: {epoch}, Loss: {avg_loss:.2f}')
+        print(f'Epoch: {epoch}, Loss: {avg_loss:.4f}')
         if store_outputs:
             outputs.append((epoch,x_orig,x_recons,labels))
         
